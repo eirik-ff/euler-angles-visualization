@@ -83,7 +83,7 @@ def make_argparser():
     parser.add_argument("first", type=float, help="The first angle.")
     parser.add_argument("second", type=float, help="The second angle.")
     parser.add_argument("third", type=float, help="The third angle.")
-    parser.add_argument("--degrees", type=bool, default=True, help="Set to true if the angles are given in degrees.")
+    parser.add_argument("--radians", action="store_true", help="Set this flag if the input is given in radians.")
 
     return parser
 
@@ -95,10 +95,24 @@ def main():
     fig, ax = setup_figure()
 
     origin = Rotation.from_quat([0, 0, 0, 1])
-    plot_rotation_axes(ax, origin, alpha=0.5, axis_colors="k")
+    plot_rotation_axes(ax, origin, alpha=0.5)
 
-    R_OA = Rotation.from_euler(args.order, [args.first, args.second, args.third], degrees=True)
-    plot_rotation_axes(ax, R_OA)
+    # R_OA = Rotation.from_euler(args.order, [args.first, args.second, args.third], degrees=not args.radians)
+    # plot_rotation_axes(ax, R_OA, linewidth=2)
+
+    gtsam = Rotation.from_matrix([
+        [0.171129, -0.321865,  0.931191],
+        [-0.985021, -0.076226,  0.154674],
+        [0.0211967, -0.943712, -0.330089]
+    ])
+    ceres = Rotation.from_matrix([
+        [0.0441444,   0.307032,  -0.950675],
+        [0.997836, -0.0599644,  0.0269681],
+        [-0.0487266,  -0.949808,  -0.309014]
+    ])
+
+    plot_rotation_axes(ax, gtsam, axis_colors=["r", "g", "b"], linewidth=2)
+    plot_rotation_axes(ax, ceres, axis_colors=["y", "m", "c"], linewidth=2)
 
     plt.show()
 
